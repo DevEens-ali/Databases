@@ -1,8 +1,49 @@
-# MySQL — INSERT, SELECT, WHERE & DELETE
+<div align="center">
 
-## 1. Selecting the Database
+# 🐬 MySQL Notes — INSERT, SELECT, WHERE & DELETE
+### `USE DB` → `INSERT` → `SELECT` → `WHERE` → `DELETE`
 
-Sabse pehle jis database ke andar kaam karna hai usay select karte hain:
+*Learning Path: Select Database → Add Data → Read Data → Filter Data → Remove Data*
+
+![SQL](https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white)
+![Level](https://img.shields.io/badge/Level-Beginner-4FD1C5?style=for-the-badge)
+![Topic](https://img.shields.io/badge/Topic-CRUD%20Basics-F2B84B?style=for-the-badge)
+
+</div>
+
+---
+
+## 🗺️ Complete Practical Flow
+
+```mermaid
+flowchart TD
+    A["USE store_db"] --> B["SELECT DATABASE()"]
+    B --> C["DESC customers"]
+    C --> D["INSERT INTO customers"]
+    D --> E["SELECT *"]
+    E --> F["SELECT specific columns"]
+    F --> G["WHERE se filter"]
+    G --> H["DELETE specific row"]
+    H --> I["SELECT * se result verify"]
+    style A fill:#F2B84B,color:#0B1220
+    style D fill:#4FD1C5,color:#0B1220
+    style G fill:#A78BFA,color:#0B1220
+    style H fill:#F0876B,color:#0B1220
+```
+
+## 🧭 Quick Overview
+
+| Command | Purpose | Easy Question |
+|---|---|---|
+| 🗄️ **USE** | Kis database mein kaam karna hai | **Which database?** |
+| ➕ **INSERT** | New records add karna | **Naya data kahan dalna hai?** |
+| 👁️ **SELECT** | Data retrieve/read karna | **Mujhe kya dikhna chahiye?** |
+| 🔎 **WHERE** | Records filter karna | **Kaunsi rows?** |
+| 🗑️ **DELETE** | Records remove karna | **Kya hatana hai?** |
+
+---
+
+## 1️⃣ Selecting the Database
 
 ```sql
 USE store_db;
@@ -12,41 +53,22 @@ Current selected database check karne ke liye:
 
 ```sql
 SELECT DATABASE();
+-- Output: store_db
 ```
 
-Output:
-
-```text
-store_db
-```
-
-### Important
-
-Correct:
-
-```sql
-SELECT DATABASE();
-```
-
-Incorrect:
-
-```sql
-SELECT DATABASES();
-```
-
-`DATABASE()` current selected database ka naam return karta hai.
+> [!IMPORTANT]
+> Correct: `SELECT DATABASE();`
+> Incorrect: `SELECT DATABASES();` ❌
+>
+> `DATABASE()` current selected database ka naam return karta hai.
 
 ---
 
-# 2. Checking Table Structure
-
-Customers table ka structure dekhne ke liye:
+## 2️⃣ Checking Table Structure
 
 ```sql
 DESC customers;
 ```
-
-Example:
 
 ```text
 +-------+--------------+------+-----+---------+-------+
@@ -58,48 +80,40 @@ Example:
 +-------+--------------+------+-----+---------+-------+
 ```
 
-Is table mein 3 columns hain:
-
-```text
-id
-name
-city
-```
-
 ---
 
-# 3. INSERT INTO
+## 3️⃣ INSERT INTO
 
-`INSERT INTO` command ka use table mein **new data/records add karne** ke liye hota hai.
-
-### Basic Syntax
+`INSERT INTO` table mein **new data/records add** karne ke liye use hota hai.
 
 ```sql
 INSERT INTO table_name(column1, column2, column3)
 VALUES(value1, value2, value3);
 ```
 
-### Example
-
 ```sql
 INSERT INTO customers(id, name, city)
 VALUES(1002, "Alexa", "Mexico");
 ```
 
-Isse `customers` table mein ek new row insert hogi.
+```mermaid
+flowchart LR
+    V1["1002"] --> C1[id]
+    V2["'Alexa'"] --> C2[name]
+    V3["'Mexico'"] --> C3[city]
+    C1 --> R["✅ New row inserted"]
+    C2 --> R
+    C3 --> R
+```
 
 ---
 
-# 4. Column Names Specify Karna
-
-Insert karte waqt hum columns ke naam specify kar sakte hain:
+## 4️⃣ Column Names Specify Karna
 
 ```sql
 INSERT INTO customers(id, name, city)
 VALUES(1002, "Alexa", "Mexico");
 ```
-
-Yahan:
 
 ```text
 id   → 1002
@@ -111,54 +125,28 @@ Data corresponding columns mein insert hota hai.
 
 ---
 
-# 5. Table Name Correct Hona Zaroori Hai
+## 5️⃣ Table Name Correct Hona Zaroori Hai
 
-Tumhari practice mein ye mistake hui:
+> [!WARNING]
+> ```sql
+> INSERT INTO customer(id, name, city)  -- ❌ typo
+> VALUES(1002, "Alexa", "Mexico");
+> ```
+> ```text
+> ERROR 1146: Table 'store_db.customer' doesn't exist
+> ```
+> Actual table ka naam `customers` tha, na ke `customer`.
 
 ```sql
-INSERT INTO customer(id, name, city)
+INSERT INTO customers(id, name, city)   -- ✅ correct
 VALUES(1002, "Alexa", "Mexico");
 ```
 
-Error:
-
-```text
-ERROR 1146:
-Table 'store_db.customer' doesn't exist
-```
-
-Kyun?
-
-Tumhari actual table ka naam:
-
-```text
-customers
-```
-
-tha, na ke:
-
-```text
-customer
-```
-
-Correct:
-
-```sql
-INSERT INTO customers(id, name, city)
-VALUES(1002, "Alexa", "Mexico");
-```
-
-### Lesson
-
-> Table ka naam exactly correct hona chahiye.
+> 🧠 **Lesson:** Table ka naam exactly correct hona chahiye.
 
 ---
 
-# 6. Multiple Rows Insert Karna
-
-Ek hi `INSERT` statement mein multiple rows bhi add kar sakte hain.
-
-### Syntax
+## 6️⃣ Multiple Rows Insert Karna
 
 ```sql
 INSERT INTO table_name(column1, column2, column3)
@@ -167,58 +155,37 @@ VALUES
 (value4, value5, value6);
 ```
 
-### Example
-
 ```sql
 INSERT INTO customers(id, name, city)
 VALUES
 (1003, "John", "Washington DC"),
 (1004, "Maria", "Columbia");
+-- Query OK, 2 rows affected
 ```
 
-Output:
-
-```text
-Query OK, 2 rows affected
+```mermaid
+flowchart LR
+    Q["Ek INSERT statement"] --> R1["Row 1: John"]
+    Q --> R2["Row 2: Maria"]
+    style Q fill:#4FD1C5,color:#0B1220
 ```
-
-Matlab ek hi query se 2 records insert ho gaye.
 
 ---
 
-# 7. String Values
+## 7️⃣ String Values
 
-Text values ko quotes ke andar likhte hain.
-
-Example:
-
-```sql
-"Alexa"
-"Mexico"
-"John"
-"Washington DC"
-```
-
-Example:
+Text values quotes ke andar likhte hain: `"Alexa"`, `"Mexico"`, `"John"`. Numbers ko normally quotes ki zaroorat nahi: `1005`.
 
 ```sql
 INSERT INTO customers(id, name, city)
 VALUES(1005, "Ali", "Lahore");
 ```
 
-Numbers ko normally quotes ki zaroorat nahi:
-
-```sql
-1005
-```
-
 ---
 
-# 8. SELECT
+## 8️⃣ SELECT
 
-`SELECT` command ka use database se **data retrieve/read** karne ke liye hota hai.
-
-### Basic Syntax
+`SELECT` database se **data retrieve/read** karne ke liye use hota hai.
 
 ```sql
 SELECT column_name
@@ -227,19 +194,13 @@ FROM table_name;
 
 ---
 
-# 9. SELECT *
-
-Agar table ke **all columns aur all rows** dekhne hon:
+## 9️⃣ SELECT *
 
 ```sql
 SELECT * FROM customers;
 ```
 
-`*` ka matlab:
-
-> All columns
-
-Example:
+`*` = **all columns**
 
 ```text
 +------+-----------+---------------+
@@ -252,21 +213,15 @@ Example:
 +------+-----------+---------------+
 ```
 
-### Easy definition
-
-> `SELECT *` table ke saare columns retrieve karta hai.
-
 ---
 
-# 10. Selecting a Specific Column
-
-Agar sirf `name` chahiye:
+## 🔟 Selecting a Specific Column
 
 ```sql
 SELECT name FROM customers;
+SELECT id FROM customers;
+SELECT city FROM customers;
 ```
-
-Output:
 
 ```text
 +-----------+
@@ -279,32 +234,14 @@ Output:
 +-----------+
 ```
 
-Sirf `id`:
-
-```sql
-SELECT id FROM customers;
-```
-
-Sirf `city`:
-
-```sql
-SELECT city FROM customers;
-```
-
 ---
 
-# 11. Selecting Multiple Columns
-
-Ek se zyada columns bhi select kar sakte hain.
-
-Example:
+## 1️⃣1️⃣ Selecting Multiple Columns
 
 ```sql
 SELECT name, city
 FROM customers;
 ```
-
-Output:
 
 ```text
 +-----------+---------------+
@@ -313,63 +250,29 @@ Output:
 | Alex chen | Monacco       |
 | Alexa     | Mexico        |
 | John      | Washington DC |
-| Maria      | Columbia      |
+| Maria     | Columbia      |
 +-----------+---------------+
 ```
 
-Another example:
-
-```sql
-SELECT id, city
-FROM customers;
-```
-
 ---
 
-# 12. Column Order
+## 1️⃣2️⃣ Column Order
 
 `SELECT` mein columns jis order mein likhe jate hain, result bhi usi order mein aata hai.
 
-Example:
-
 ```sql
-SELECT city, id, name
-FROM customers;
+SELECT city, id, name FROM customers;   -- output: city, id, name
+SELECT name, city FROM customers;       -- output: name, city
 ```
 
-Output columns:
-
-```text
-city
-id
-name
-```
-
-Agar:
-
-```sql
-SELECT name, city
-FROM customers;
-```
-
-to:
-
-```text
-name
-city
-```
-
-### Important
-
-> `SELECT` mein columns ka order change karne se database mein actual table structure change nahi hota. Sirf query ka output order change hota hai.
+> [!NOTE]
+> `SELECT` mein columns ka order change karne se database mein actual table structure change **nahi** hota — sirf query ka output order change hota hai.
 
 ---
 
-# 13. WHERE Clause
+## 1️⃣3️⃣ WHERE Clause
 
-`WHERE` ka use **specific records filter** karne ke liye hota hai.
-
-### Syntax
+`WHERE` **specific records filter** karne ke liye use hota hai.
 
 ```sql
 SELECT *
@@ -377,19 +280,22 @@ FROM table_name
 WHERE condition;
 ```
 
+```mermaid
+flowchart LR
+    T[(customers)] --> W{condition match?}
+    W -- Yes --> K[✅ row return hoti hai]
+    W -- No --> X[❌ row skip hoti hai]
+```
+
 ---
 
-# 14. WHERE with ID
-
-Example:
+## 1️⃣4️⃣ WHERE with ID
 
 ```sql
 SELECT *
 FROM customers
 WHERE id = 1003;
 ```
-
-Output:
 
 ```text
 +------+------+---------------+
@@ -399,17 +305,9 @@ Output:
 +------+------+---------------+
 ```
 
-Yahan MySQL sirf woh row return karega jahan:
-
-```text
-id = 1003
-```
-
 ---
 
-# 15. WHERE with Text
-
-City ke basis par search:
+## 1️⃣5️⃣ WHERE with Text
 
 ```sql
 SELECT *
@@ -417,320 +315,179 @@ FROM customers
 WHERE city = "Washington DC";
 ```
 
-Ye sirf Washington DC wale customer ko return karega.
-
-### Simple meaning
-
-> `WHERE` database ko batata hai ke humein kaunse records chahiye.
+> 🧠 **Simple meaning:** `WHERE` database ko batata hai ke humein kaunse records chahiye.
 
 ---
 
-# 16. DELETE
+## 1️⃣6️⃣ DELETE
 
-`DELETE` command ka use table se **records/rows remove** karne ke liye hota hai.
-
-### Syntax
+`DELETE` table se **records/rows remove** karne ke liye use hota hai.
 
 ```sql
 DELETE FROM table_name
 WHERE condition;
 ```
 
-### Example
-
 ```sql
 DELETE FROM customers
 WHERE id = 1003;
 ```
 
-Isse `id = 1003` wali row delete ho jayegi.
-
 ---
 
-# 17. DELETE with Name
-
-Example:
+## 1️⃣7️⃣ DELETE with Name
 
 ```sql
 DELETE FROM customers
 WHERE name = "Maria";
 ```
 
-Isse Maria naam wali row delete ho jayegi.
+---
+
+## 1️⃣8️⃣ ⚠️ DELETE mein WHERE Bohot Important Hai
+
+```mermaid
+flowchart TD
+    D1["DELETE FROM customers WHERE id = 1003"] --> S1["✅ Sirf matching row delete"]
+    D2["DELETE FROM customers  -- WHERE missing!"] --> S2["❌ Saari rows delete ho sakti hain"]
+    style S1 fill:#4FD1C5,color:#0B1220
+    style S2 fill:#F0876B,color:#0B1220
+```
+
+> [!DANGER]
+> Table structure remain kar sakta hai, lekin records remove ho jayenge.
+> **Beginner rule:** `DELETE` use karte waqt `WHERE` condition ko hamesha carefully check karo.
 
 ---
 
-# 18. ⚠️ DELETE mein WHERE bohot important hai
+## 1️⃣9️⃣ DELETE vs DROP TABLE
 
-Ye command:
-
-```sql
-DELETE FROM customers
-WHERE id = 1003;
-```
-
-sirf matching row delete karegi.
-
-Lekin agar tum likho:
-
-```sql
-DELETE FROM customers;
-```
-
-to **table ki saari rows delete ho sakti hain.**
-
-Table structure remain kar sakta hai, lekin records remove ho jayenge.
-
-Isliye beginner ke taur par:
-
-> `DELETE` use karte waqt `WHERE` condition ko hamesha carefully check karo.
-
----
-
-# 19. DELETE vs DROP TABLE
-
-Ye difference bohot important hai.
-
-### DELETE
-
-```sql
-DELETE FROM customers
-WHERE id = 1003;
-```
-
-Specific rows ko delete karta hai.
-
-### DROP TABLE
-
-```sql
-DROP TABLE customers;
-```
-
-Poori table ko delete karta hai, including its structure and data.
-
-### Easy comparison
+| | 🗑️ DELETE | 💥 DROP TABLE |
+|---|---|---|
+| Kya delete hota hai | Specific rows | Poori table (structure + data) |
+| Table wapis milti hai? | Haan, sirf rows kam hoti hain | Nahi, table hi khatam |
 
 ```text
-DELETE
-  ↓
-Rows delete
-
-DROP TABLE
-  ↓
-Complete table delete
+DELETE       → Rows delete
+DROP TABLE   → Complete table delete
 ```
 
 ---
 
-# 20. CRUD Concept
-
-Aaj tumne CRUD ka major portion practically perform kiya.
+## 2️⃣0️⃣ CRUD Concept
 
 **CRUD = Create, Read, Update, Delete**
 
-| Operation | SQL      |
-| --------- | -------- |
-| Create    | `INSERT` |
-| Read      | `SELECT` |
-| Update    | `UPDATE` |
-| Delete    | `DELETE` |
+| Operation | SQL |
+|---|---|
+| Create | `INSERT` |
+| Read | `SELECT` |
+| Update | `UPDATE` |
+| Delete | `DELETE` |
 
-Abhi tumne:
-
-```text
-INSERT → Create
-SELECT → Read
-DELETE → Delete
-```
-
-seekh liya hai.
-
-`UPDATE` abhi next important command hai.
-
----
-
-# 21. Complete Practical Flow
-
-Tumhara practical flow basically ye tha:
-
-```text
-USE store_db
-       ↓
-SELECT DATABASE()
-       ↓
-DESC customers
-       ↓
-INSERT INTO customers
-       ↓
-SELECT *
-       ↓
-SELECT specific columns
-       ↓
-WHERE se filter
-       ↓
-DELETE specific row
-       ↓
-SELECT * se result verify
+```mermaid
+flowchart LR
+    C[Create] -->|INSERT| done1[✅]
+    R[Read] -->|SELECT| done2[✅]
+    U[Update] -->|UPDATE| pending[⏳ Next topic]
+    D[Delete] -->|DELETE| done3[✅]
+    style done1 fill:#4FD1C5,color:#0B1220
+    style done2 fill:#4FD1C5,color:#0B1220
+    style done3 fill:#4FD1C5,color:#0B1220
+    style pending fill:#F2B84B,color:#0B1220
 ```
 
 ---
 
-# 22. Important Mistakes from Practice
+## 2️⃣1️⃣ Important Mistakes from Practice
 
-### Mistake 1
+| # | Mistake | Fix |
+|---|---|---|
+| 1 | `SELECT DATABASES();` ❌ | `SELECT DATABASE();` ✅ |
+| 2 | `INSERT INTO customer(...)` (typo) | `INSERT INTO customers(...)` ✅ |
+| 3 | `(1004,"Maria","Columbia)` — missing closing quote | `(1004, "Maria", "Columbia")` ✅ |
 
-```sql
-SELECT DATABASES();
-```
-
-❌ Incorrect
-
-Correct:
-
-```sql
-SELECT DATABASE();
-```
+> [!TIP]
+> Agar quotation/string properly close na ho to MySQL continuation prompt de sakta hai — hamesha quotes count karo.
 
 ---
 
-### Mistake 2
+## 🧾 Query Examples — Quick Revision
 
 ```sql
-INSERT INTO customer(...)
-```
-
-jab actual table:
-
-```text
-customers
-```
-
-thi.
-
-Correct:
-
-```sql
-INSERT INTO customers(...);
-```
-
----
-
-### Mistake 3 — Incomplete String
-
-Tumhari practice mein:
-
-```sql
-(1004,"Maria","Columbia)
-```
-
-mein closing quote missing tha.
-
-Correct:
-
-```sql
-(1004, "Maria", "Columbia");
-```
-
-Agar quotation/string properly close na ho to MySQL continuation prompt de sakta hai.
-
----
-
-# 23. Query Examples — Quick Revision
-
-### Insert one row
-
-```sql
+-- Insert one row
 INSERT INTO customers(id, name, city)
 VALUES(1005, "Ali", "Lahore");
-```
 
-### Insert multiple rows
-
-```sql
+-- Insert multiple rows
 INSERT INTO customers(id, name, city)
 VALUES
 (1006, "Ahmed", "Islamabad"),
 (1007, "Sara", "Karachi");
-```
 
-### Select everything
-
-```sql
+-- Select everything
 SELECT * FROM customers;
-```
 
-### Select one column
-
-```sql
+-- Select one column
 SELECT name FROM customers;
-```
 
-### Select multiple columns
-
-```sql
+-- Select multiple columns
 SELECT name, city FROM customers;
-```
 
-### Filter by ID
-
-```sql
+-- Filter by ID
 SELECT * FROM customers
 WHERE id = 1003;
-```
 
-### Filter by city
-
-```sql
+-- Filter by city
 SELECT * FROM customers
 WHERE city = "Washington DC";
-```
 
-### Delete by ID
-
-```sql
+-- Delete by ID
 DELETE FROM customers
 WHERE id = 1003;
-```
 
-### Delete by name
-
-```sql
+-- Delete by name
 DELETE FROM customers
 WHERE name = "Maria";
 ```
 
 ---
 
-# 24. Interview Questions
+## 🎤 Interview Questions
 
-### Q1. What is INSERT used for?
+<details>
+<summary><b>Q1. What is INSERT used for?</b></summary>
+<br><code>INSERT</code> is used to add new records into a table.
+</details>
 
-> `INSERT` is used to add new records into a table.
+<details>
+<summary><b>Q2. What is SELECT used for?</b></summary>
+<br><code>SELECT</code> is used to retrieve data from a database.
+</details>
 
-### Q2. What is SELECT used for?
+<details>
+<summary><b>Q3. What does SELECT * mean?</b></summary>
+<br>It selects all columns from the specified table.
+</details>
 
-> `SELECT` is used to retrieve data from a database.
+<details>
+<summary><b>Q4. What is WHERE used for?</b></summary>
+<br><code>WHERE</code> is used to filter records based on a specified condition.
+</details>
 
-### Q3. What does `SELECT *` mean?
-
-> It selects all columns from the specified table.
-
-### Q4. What is WHERE used for?
-
-> `WHERE` is used to filter records based on a specified condition.
-
-### Q5. Can we select specific columns?
-
-Yes.
+<details>
+<summary><b>Q5. Can we select specific columns?</b></summary>
+<br>Yes.
 
 ```sql
 SELECT name, city
 FROM customers;
 ```
+</details>
 
-### Q6. Can we insert multiple rows in one query?
-
-Yes.
+<details>
+<summary><b>Q6. Can we insert multiple rows in one query?</b></summary>
+<br>Yes.
 
 ```sql
 INSERT INTO customers(id, name, city)
@@ -738,24 +495,26 @@ VALUES
 (1003, "John", "Washington DC"),
 (1004, "Maria", "Columbia");
 ```
+</details>
 
-### Q7. What does DELETE do?
+<details>
+<summary><b>Q7. What does DELETE do?</b></summary>
+<br><code>DELETE</code> removes records/rows from a table.
+</details>
 
-> `DELETE` removes records/rows from a table.
+<details>
+<summary><b>Q8. What is the difference between DELETE and DROP TABLE?</b></summary>
+<br><code>DELETE</code> removes rows from a table, while <code>DROP TABLE</code> removes the complete table, including its structure and data.
+</details>
 
-### Q8. What is the difference between DELETE and DROP TABLE?
+<details>
+<summary><b>Q9. Why is WHERE important with DELETE?</b></summary>
+<br>Without <code>WHERE</code>, a <code>DELETE</code> statement can remove all rows from the table.
+</details>
 
-> `DELETE` removes rows from a table, while `DROP TABLE` removes the complete table, including its structure and data.
-
-### Q9. Why is WHERE important with DELETE?
-
-> Without `WHERE`, a `DELETE` statement can remove all rows from the table.
-
-### Q10. What does CRUD stand for?
-
-> **Create, Read, Update, Delete.**
-
-In SQL:
+<details>
+<summary><b>Q10. What does CRUD stand for?</b></summary>
+<br><b>Create, Read, Update, Delete.</b>
 
 ```text
 Create → INSERT
@@ -763,39 +522,52 @@ Read   → SELECT
 Update → UPDATE
 Delete → DELETE
 ```
+</details>
 
 ---
 
-# 🧠 Final Mental Model
+## 🧠 Final Mental Model
 
-```text
-                 CUSTOMERS TABLE
-                       │
-        ┌──────────────┼──────────────┐
-        ↓              ↓              ↓
-       id             name           city
-        │
-        ↓
-      INSERT
-        ↓
-    Add records
-        │
-        ↓
-      SELECT
-        ↓
-    Read records
-        │
-        ↓
-      WHERE
-        ↓
-   Filter records
-        │
-        ↓
-      DELETE
-        ↓
-   Remove records
+```mermaid
+flowchart TD
+    T[CUSTOMERS TABLE] --> id[id]
+    T --> name[name]
+    T --> city[city]
+    T --> I["➕ INSERT → Add records"]
+    I --> S["👁️ SELECT → Read records"]
+    S --> W["🔎 WHERE → Filter records"]
+    W --> D["🗑️ DELETE → Remove records"]
+    style I fill:#4FD1C5,color:#0B1220
+    style S fill:#F2B84B,color:#0B1220
+    style W fill:#A78BFA,color:#0B1220
+    style D fill:#F0876B,color:#0B1220
 ```
 
-### Golden Rule
+<div align="center">
 
-> **INSERT adds data, SELECT reads data, WHERE filters data, and DELETE removes data.**
+> **Golden Rule: INSERT adds data, SELECT reads data, WHERE filters data, and DELETE removes data.**
+
+</div>
+
+---
+
+<details>
+<summary>📁 Suggested GitHub File Structure (click to expand)</summary>
+
+```text
+mysql/
+│
+├── 01_mysql_basics.md
+├── 02_insert_select_where_delete.md
+├── 03_primary_key_auto_increment_alias.md
+├── 04_where_update_delete_string_functions.md
+└── 05_not_null_default_constraints.md
+```
+
+</details>
+
+<div align="center">
+
+**Practice karte raho — CRUD hi har database ki jaan hai. 🐬🔥**
+
+</div>
