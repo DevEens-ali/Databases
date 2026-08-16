@@ -1,92 +1,88 @@
-# 🐬 MySQL Notes --- Primary Key, AUTO_INCREMENT & Alias
+<div align="center">
 
-> 📚 **Learning Path:** Constraints → Identity → Automatic IDs →
-> Readable Queries\
-> 🎯 **Goal:** Understand what each concept does, why we use it, and how
-> they work together.
+# 🐬 MySQL Notes — Primary Key, AUTO_INCREMENT & Alias
+### `PRIMARY KEY` → `AUTO_INCREMENT` → `ALIAS`
 
-------------------------------------------------------------------------
+*Learning Path: Constraints → Identity → Automatic IDs → Readable Queries*
+
+![SQL](https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white)
+![Level](https://img.shields.io/badge/Level-Beginner-4FD1C5?style=for-the-badge)
+![Lang](https://img.shields.io/badge/Notes-Roman%20Urdu-F2B84B?style=for-the-badge)
+
+</div>
+
+---
+
+## 🗺️ Is Notes Ka Flow
+
+```mermaid
+flowchart LR
+    A[PRIMARY KEY] --> B[UNIQUE vs KEY]
+    B --> C[AUTO_INCREMENT]
+    C --> D[PK + AUTO_INCREMENT]
+    D --> E[ALIAS]
+    E --> F[Column Alias]
+    E --> G[Table Alias]
+    style A fill:#F2B84B,color:#0B1220
+    style B fill:#F2B84B,color:#0B1220
+    style C fill:#F0876B,color:#0B1220
+    style D fill:#F0876B,color:#0B1220
+    style E fill:#4FD1C5,color:#0B1220
+    style F fill:#A78BFA,color:#0B1220
+    style G fill:#A78BFA,color:#0B1220
+```
 
 ## 🧭 Quick Overview
 
-  -----------------------------------------------------------------------
-  Concept                 Main Purpose            Easy Question
-  ----------------------- ----------------------- -----------------------
-  🔑 **PRIMARY KEY**      Uniquely identifies     **Which row is this?**
-                          each row                
+| Concept | Main Purpose | Easy Question |
+|---|---|---|
+| 🔑 **PRIMARY KEY** | Uniquely identifies each row | **Which row is this?** |
+| 🔢 **AUTO_INCREMENT** | Automatically generates numeric IDs | **What ID should the new row get?** |
+| 🏷️ **ALIAS** | Gives a temporary name to a column/table | **How should I display/reference this?** |
 
-  🔢 **AUTO_INCREMENT**   Automatically generates **What ID should the
-                          numeric IDs             new row get?**
+---
 
-  🏷️ **ALIAS**            Gives a temporary name  **How should I
-                          to a column/table       display/reference
-                                                  this?**
-  -----------------------------------------------------------------------
+## 🔑 1. PRIMARY KEY
 
-------------------------------------------------------------------------
+Ek **Primary Key** ek constraint hai jo table ki **har row/record ko uniquely identify** karti hai.
 
-# 🔑 1. PRIMARY KEY
+> 🧠 **Simple Definition:** A Primary Key uniquely identifies each row in a table.
 
-A **Primary Key** is a constraint used to **uniquely identify each
-row/record in a table**.
-
-### 🧠 Simple Definition
-
-> **A Primary Key uniquely identifies each row in a table.**
-
-### Example
-
-``` text
+```text
 id    name      city
 1001  Alex      Lahore
 1002  Ahmed     Karachi
 1003  John      Islamabad
 ```
 
-Here, `id` can be the Primary Key:
+Yahan `id` Primary Key ban sakta hai — har value ek specific row identify karti hai.
 
-``` text
-1001 → Alex
-1002 → Ahmed
-1003 → John
+### ⭐ Properties of a Primary Key
+
+```mermaid
+flowchart TD
+    PK[PRIMARY KEY] --> U["1️⃣ UNIQUE — koi bhi 2 rows same value nahi rakh saktin"]
+    PK --> N["2️⃣ NOT NULL — kabhi khali nahi ho sakti"]
 ```
 
-Each value identifies one specific row.
-
-------------------------------------------------------------------------
-
-## ⭐ Properties of a Primary Key
-
-### 1️⃣ Unique
-
-Two rows cannot have the same Primary Key value.
-
-``` text
+**Unique:**
+```text
 1001 → Alex
-1001 → Ahmed   ❌
+1001 → Ahmed   ❌  Duplicate values allowed nahi hain
 ```
 
-Duplicate Primary Key values are not allowed.
-
-### 2️⃣ NOT NULL
-
-A Primary Key cannot contain `NULL`.
-
-``` text
+**NOT NULL:**
+```text
 id
 ----
 1001
 1002
-NULL   ❌
+NULL   ❌  Har row ko valid identifier chahiye
 ```
 
-Every row needs a valid identifier.
+### 🛠️ Creating a Primary Key
 
-------------------------------------------------------------------------
-
-## 🛠️ Creating a Primary Key
-
-``` sql
+```sql
 CREATE TABLE customers (
     id INT PRIMARY KEY,
     name VARCHAR(50),
@@ -94,35 +90,21 @@ CREATE TABLE customers (
 );
 ```
 
-Here:
+Yahan `id → PRIMARY KEY`, isliye ye hamesha `UNIQUE + NOT NULL` hoga.
 
-``` text
-id → PRIMARY KEY
-```
+---
 
-So `id` must be:
+## 🔒 PRIMARY KEY vs UNIQUE
 
-``` text
-UNIQUE + NOT NULL
-```
+Dono uniqueness enforce karte hain, lekin **purpose alag hai**.
 
-------------------------------------------------------------------------
+| | 🔑 PRIMARY KEY | 🔒 UNIQUE |
+|---|---|---|
+| Kaam | Row ko uniquely identify karta hai | Column mein duplicate values rokta hai |
+| NULL allow? | ❌ Nahi | ✅ Ho sakta hai |
+| Per table | Sirf 1 | Multiple ho sakte hain |
 
-# 🔒 PRIMARY KEY vs UNIQUE
-
-Both enforce uniqueness, but their **purpose is different**.
-
-### 🔑 PRIMARY KEY
-
-> Used to uniquely identify each row/record.
-
-### 🔒 UNIQUE
-
-> Used to prevent duplicate values in a column.
-
-Example:
-
-``` sql
+```sql
 CREATE TABLE users (
     id INT PRIMARY KEY,
     email VARCHAR(100) UNIQUE,
@@ -130,137 +112,77 @@ CREATE TABLE users (
 );
 ```
 
-``` text
-id
-↓
-PRIMARY KEY
-↓
-Identifies the row
-
-
-email
-↓
-UNIQUE
-↓
-Prevents duplicate emails
-```
-
-### 🧠 Memory Trick
-
-> **PRIMARY KEY → "Which row is this?"**\
+> 🧠 **Memory Trick:**
+> **PRIMARY KEY → "Which row is this?"**
 > **UNIQUE → "Is this value already used?"**
 
-------------------------------------------------------------------------
+---
 
-# 🔢 2. AUTO_INCREMENT
+## 🔢 2. AUTO_INCREMENT
 
-`AUTO_INCREMENT` tells MySQL to **automatically generate the next
-numeric value** when a new row is inserted.
+`AUTO_INCREMENT` MySQL ko batata hai ke **naya row insert hote hi agla numeric value automatically generate karo**.
 
-### 🧠 Simple Definition
+> 🧠 **Simple Definition:** AUTO_INCREMENT automatically generates sequential numeric values for a column when new records are inserted.
 
-> **AUTO_INCREMENT automatically generates sequential numeric values for
-> a column when new records are inserted.**
+### 😓 Without AUTO_INCREMENT
 
-------------------------------------------------------------------------
-
-## 😓 Without AUTO_INCREMENT
-
-``` sql
+```sql
 CREATE TABLE customers (
     id INT PRIMARY KEY,
     name VARCHAR(50)
 );
+
+INSERT INTO customers(id, name) VALUES (1, 'Ali');
+INSERT INTO customers(id, name) VALUES (2, 'Ahmed');
 ```
 
-We have to provide the ID ourselves:
+`id` humein manually dena padta hai.
 
-``` sql
-INSERT INTO customers(id, name)
-VALUES (1, 'Ali');
+### 🚀 With AUTO_INCREMENT
 
-INSERT INTO customers(id, name)
-VALUES (2, 'Ahmed');
-```
-
-``` text
-id → manually entered
-```
-
-------------------------------------------------------------------------
-
-## 🚀 With AUTO_INCREMENT
-
-``` sql
+```sql
 CREATE TABLE customers (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50)
 );
+
+INSERT INTO customers(name) VALUES ('Ali');
 ```
 
-Now we can insert only the name:
+MySQL khud generate karta hai:
 
-``` sql
-INSERT INTO customers(name)
-VALUES ('Ali');
+```mermaid
+flowchart LR
+    R1["INSERT 'Ali'"] --> ID1["id = 1"]
+    R2["INSERT 'Ahmed'"] --> ID2["id = 2"]
+    R3["INSERT 'Sara'"] --> ID3["id = 3"]
+    ID1 --> ID2 --> ID3
 ```
 
-MySQL generates:
+> 🧠 **Trick:** `AUTO_INCREMENT` → *"Agla number khud de do."*
 
-``` text
-id = 1
-```
+---
 
-Next record:
+## 🤝 PRIMARY KEY + AUTO_INCREMENT
 
-``` text
-id = 2
-```
+In dono ke **alag alag jobs** hain.
 
-Then:
-
-``` text
-id = 3
-```
-
-### 🔥 The Flow
-
-``` text
-New Row
-   ↓
-MySQL
-   ↓
-AUTO_INCREMENT
-   ↓
-1 → 2 → 3 → 4 → ...
-```
-
-------------------------------------------------------------------------
-
-# 🤝 PRIMARY KEY + AUTO_INCREMENT
-
-These two features have **different jobs**.
-
-``` text
-┌──────────────────────┐
-│    PRIMARY KEY 🔑    │
-│                      │
-│ Identifies the row   │
-│ Uniquely             │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│ AUTO_INCREMENT 🔢    │
-│                      │
-│ Generates the ID     │
-│ Automatically        │
-└──────────────────────┘
+```mermaid
+flowchart TD
+    subgraph PK["🔑 PRIMARY KEY"]
+        direction TB
+        P1[Row ko uniquely identify karta hai]
+    end
+    subgraph AI["🔢 AUTO_INCREMENT"]
+        direction TB
+        A1[ID ko automatically generate karta hai]
+    end
+    PK --> AI
 ```
 
 ### Common Pattern
 
-``` sql
+```sql
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -268,43 +190,25 @@ CREATE TABLE users (
 );
 ```
 
-Think of it like this:
+> 🔑 **PRIMARY KEY:** "Ye is user ki unique identity hai."
+> 🔢 **AUTO_INCREMENT:** "Main wo identity number generate kar dunga."
 
-> 🔑 **PRIMARY KEY:** "This is this user's unique identity."\
-> 🔢 **AUTO_INCREMENT:** "I'll generate that identity number for you."
+---
 
-------------------------------------------------------------------------
+## 🏷️ 3. ALIAS
 
-# 🏷️ 3. ALIAS
+Ek **Alias** column ya table ko **query ke andar temporary alternative naam** deta hai.
 
-An **Alias** gives a column or table a **temporary alternative name
-inside a SQL query**.
+> 🧠 **Simple Definition:** An alias is a temporary alternative name given to a column or table in a SQL query.
 
-### 🧠 Simple Definition
+### 🏷️ Column Alias
 
-> **An alias is a temporary alternative name given to a column or table
-> in a SQL query.**
-
-------------------------------------------------------------------------
-
-## 🏷️ Column Alias
-
-Suppose the actual column is:
-
-``` text
-name
-```
-
-We can display it as:
-
-``` sql
+```sql
 SELECT name AS 'Customer Name'
 FROM customers;
 ```
 
-Result:
-
-``` text
+```text
 Customer Name
 -------------
 Ali
@@ -312,296 +216,201 @@ Ahmed
 John
 ```
 
-⚠️ **Important:** The database column is still called `name`.
+> [!IMPORTANT]
+> Database mein column ab bhi `name` hi kehlata hai. **Alias permanently rename nahi karta** — sirf query result mein naya naam dikhata hai.
 
-Alias does **not** permanently rename the column.
-
-``` text
-Database:
-name
-
-        ↓ ALIAS
-
-Query Result:
-Customer Name
+```mermaid
+flowchart LR
+    D["Database column: name"] -->|ALIAS| Q["Query result: Customer Name"]
 ```
 
-------------------------------------------------------------------------
+### ✂️ `AS` Keyword
 
-## ✂️ `AS` Keyword
-
-Usually we write:
-
-``` sql
+```sql
 SELECT name AS customer_name
 FROM customers;
 ```
 
-In MySQL, this can also work:
+MySQL mein ye bhi chal jata hai (lekin `AS` zyada readable hai):
 
-``` sql
+```sql
 SELECT name customer_name
 FROM customers;
 ```
 
-For beginners, using `AS` is clearer and more readable.
+### 🏷️ Table Alias
 
-------------------------------------------------------------------------
-
-# 🏷️ Table Alias
-
-A table can also receive a temporary short name.
-
-``` sql
+```sql
 SELECT c.name
 FROM customers AS c;
 ```
 
-Here:
+`customers → c`, isliye `customers.name` ki jagah sirf `c.name` likh sakte hain. Table aliases **multiple tables aur JOINs** ke sath bohot useful hote hain.
 
-``` text
-customers → c
-```
+---
 
-So instead of:
+## 🧩 Complete Example
 
-``` text
-customers.name
-```
-
-we can write:
-
-``` text
-c.name
-```
-
-Table aliases become especially useful when working with **multiple
-tables and JOINs**.
-
-------------------------------------------------------------------------
-
-# 🧩 Complete Example
-
-``` sql
+```sql
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE
 );
-```
 
-Insert some users:
-
-``` sql
-INSERT INTO users(name, email)
-VALUES ('Ali', 'ali@gmail.com');
-
-INSERT INTO users(name, email)
-VALUES ('Ahmed', 'ahmed@gmail.com');
+INSERT INTO users(name, email) VALUES ('Ali', 'ali@gmail.com');
+INSERT INTO users(name, email) VALUES ('Ahmed', 'ahmed@gmail.com');
 ```
 
 MySQL automatically generates:
 
-``` text
+```text
 id    name    email
 1     Ali     ali@gmail.com
 2     Ahmed   ahmed@gmail.com
 ```
 
-Now use an alias:
+Ab alias use karte hain:
 
-``` sql
+```sql
 SELECT name AS 'Customer Name', email AS 'Email Address'
 FROM users;
 ```
 
-The result can show:
-
-``` text
+```text
 Customer Name    Email Address
 --------------   ----------------
 Ali              ali@gmail.com
 Ahmed            ahmed@gmail.com
 ```
 
-But the actual database columns remain:
+Lekin actual database columns ab bhi `name` aur `email` hi hain.
 
-``` text
-name
-email
-```
+---
 
-------------------------------------------------------------------------
+## 🧠 PRIMARY KEY vs AUTO_INCREMENT vs ALIAS
 
-# 🧠 PRIMARY KEY vs AUTO_INCREMENT vs ALIAS
+| Concept | Kya karta hai? | Stored data change karta hai? |
+|---|---|---|
+| 🔑 PRIMARY KEY | Row ko uniquely identify karta hai | Nahi |
+| 🔢 AUTO_INCREMENT | Numeric IDs automatically generate karta hai | ID value generate karta hai |
+| 🏷️ ALIAS | Temporary query naam deta hai | Nahi |
 
-  -----------------------------------------------------------------------
-  Concept                 What does it do?        Changes stored data?
-  ----------------------- ----------------------- -----------------------
-  🔑 PRIMARY KEY          Uniquely identifies a   No
-                          row                     
+---
 
-  🔢 AUTO_INCREMENT       Automatically generates Generates the ID value
-                          numeric IDs             
+## 🎯 Real-World Mental Model
 
-  🏷️ ALIAS                Gives a temporary query No
-                          name                    
-  -----------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-# 🎯 Real-World Mental Model
-
-Imagine a university student table:
-
-``` text
+```text
 Student ID    Name        Email
      1        Ali         ali@gmail.com
      2        Ahmed       ahmed@gmail.com
      3        Sara        sara@gmail.com
 ```
 
-### 🔑 PRIMARY KEY
+- 🔑 **PRIMARY KEY:** Student ID har student ko uniquely identify karta hai.
+- 🔢 **AUTO_INCREMENT:** MySQL khud deta hai `1 → 2 → 3 → 4 → ...`
+- 🏷️ **ALIAS:** `Name` ki jagah `Student Name` dikha sakte hain, bina actual column change kiye.
 
-Student ID uniquely identifies each student.
+---
 
-### 🔢 AUTO_INCREMENT
+## 🎤 Interview Questions
 
-MySQL automatically gives:
+<details>
+<summary><b>Q1. What is a Primary Key?</b></summary>
+<br>A Primary Key is a constraint that uniquely identifies each row in a table.
+</details>
 
-``` text
-1 → 2 → 3 → 4 → ...
+<details>
+<summary><b>Q2. Can a Primary Key contain duplicate values?</b></summary>
+<br>No. Primary Key values must be unique.
+</details>
+
+<details>
+<summary><b>Q3. Can a Primary Key contain NULL?</b></summary>
+<br>No. A Primary Key cannot contain NULL values.
+</details>
+
+<details>
+<summary><b>Q4. What is AUTO_INCREMENT?</b></summary>
+<br>AUTO_INCREMENT automatically generates sequential numeric values for a column when new rows are inserted.
+</details>
+
+<details>
+<summary><b>Q5. Why is AUTO_INCREMENT commonly used with a Primary Key?</b></summary>
+<br>A Primary Key needs unique values, and AUTO_INCREMENT can automatically generate new numeric IDs for each record.
+</details>
+
+<details>
+<summary><b>Q6. Does AUTO_INCREMENT itself make a column a Primary Key?</b></summary>
+<br>No. They are different concepts. PRIMARY KEY defines the unique identifier, while AUTO_INCREMENT generates numeric values automatically.
+</details>
+
+<details>
+<summary><b>Q7. What is an Alias?</b></summary>
+<br>An alias is a temporary alternative name given to a column or table in a SQL query.
+</details>
+
+<details>
+<summary><b>Q8. Does an alias permanently rename a column?</b></summary>
+<br>No. An alias only affects that particular query's result or references.
+</details>
+
+<details>
+<summary><b>Q9. What is the difference between PRIMARY KEY and UNIQUE?</b></summary>
+<br>PRIMARY KEY is used to uniquely identify each row, while UNIQUE is used to prevent duplicate values.
+</details>
+
+---
+
+## ⚡ Quick Revision
+
+```mermaid
+flowchart TD
+    PK["🔑 PRIMARY KEY"] --> PK1[Uniquely identifies each row]
+    PK1 --> PK2["Unique + NOT NULL"]
+
+    AI["🔢 AUTO_INCREMENT"] --> AI1[Automatically generates numeric IDs]
+    AI1 --> AI2[Commonly used with Primary Key]
+
+    AL["🏷️ ALIAS"] --> AL1[Temporary alternative name]
+    AL1 --> AL2[Used for columns or tables]
 ```
 
-### 🏷️ ALIAS
+> 🧠 **One-Line Memory Trick:**
+> **PRIMARY KEY identifies → AUTO_INCREMENT generates → ALIAS renames temporarily.**
 
-Instead of displaying:
-
-``` text
-Name
-```
-
-we can display:
-
-``` text
-Student Name
-```
-
-without changing the actual database column.
-
-------------------------------------------------------------------------
-
-# 🎤 Interview Questions
-
-### Q1. What is a Primary Key?
-
-> A Primary Key is a constraint that uniquely identifies each row in a
-> table.
-
-### Q2. Can a Primary Key contain duplicate values?
-
-> No. Primary Key values must be unique.
-
-### Q3. Can a Primary Key contain NULL?
-
-> No. A Primary Key cannot contain NULL values.
-
-### Q4. What is AUTO_INCREMENT?
-
-> AUTO_INCREMENT automatically generates sequential numeric values for a
-> column when new rows are inserted.
-
-### Q5. Why is AUTO_INCREMENT commonly used with a Primary Key?
-
-> A Primary Key needs unique values, and AUTO_INCREMENT can
-> automatically generate new numeric IDs for each record.
-
-### Q6. Does AUTO_INCREMENT itself make a column a Primary Key?
-
-> No. They are different concepts. PRIMARY KEY defines the unique
-> identifier, while AUTO_INCREMENT generates numeric values
-> automatically.
-
-### Q7. What is an Alias?
-
-> An alias is a temporary alternative name given to a column or table in
-> a SQL query.
-
-### Q8. Does an alias permanently rename a column?
-
-> No. An alias only affects that particular query's result or
-> references.
-
-### Q9. What is the difference between PRIMARY KEY and UNIQUE?
-
-> PRIMARY KEY is used to uniquely identify each row, while UNIQUE is
-> used to prevent duplicate values.
-
-------------------------------------------------------------------------
-
-# ⚡ Quick Revision
-
-``` text
-🔑 PRIMARY KEY
-        ↓
-Uniquely identifies each row
-        ↓
-Unique + NOT NULL
-
-
-🔢 AUTO_INCREMENT
-        ↓
-Automatically generates numeric IDs
-        ↓
-Commonly used with Primary Key
-
-
-🏷️ ALIAS
-        ↓
-Temporary alternative name
-        ↓
-Used for columns or tables
-```
-
-------------------------------------------------------------------------
-
-# 🧠 One-Line Memory Trick
-
-> **PRIMARY KEY identifies → AUTO_INCREMENT generates → ALIAS renames
-> temporarily.**
-
-------------------------------------------------------------------------
+---
 
 ## 📝 Practice Checklist
 
-Before moving to the next topic, make sure you can explain:
+- [ ] What is a Primary Key?
+- [ ] Why must a Primary Key be unique?
+- [ ] Can a Primary Key be NULL?
+- [ ] Difference between PRIMARY KEY and UNIQUE
+- [ ] What does AUTO_INCREMENT do?
+- [ ] Why is AUTO_INCREMENT commonly used with IDs?
+- [ ] What is a column alias?
+- [ ] What is a table alias?
+- [ ] Does an alias permanently rename a column?
+- [ ] Difference between PRIMARY KEY, AUTO_INCREMENT and ALIAS
 
--   [ ] What is a Primary Key?
--   [ ] Why must a Primary Key be unique?
--   [ ] Can a Primary Key be NULL?
--   [ ] Difference between PRIMARY KEY and UNIQUE
--   [ ] What does AUTO_INCREMENT do?
--   [ ] Why is AUTO_INCREMENT commonly used with IDs?
--   [ ] What is a column alias?
--   [ ] What is a table alias?
--   [ ] Does an alias permanently rename a column?
--   [ ] Difference between PRIMARY KEY, AUTO_INCREMENT and ALIAS
-
-------------------------------------------------------------------------
+---
 
 ### 🚀 Learning Flow
 
-``` text
-Constraints
-    ↓
-🔑 PRIMARY KEY
-    ↓
-🔢 AUTO_INCREMENT
-    ↓
-🏷️ ALIAS
-    ↓
-Next SQL Concept →
+```mermaid
+flowchart LR
+    C[Constraints] --> PK[🔑 PRIMARY KEY]
+    PK --> AI[🔢 AUTO_INCREMENT]
+    AI --> AL[🏷️ ALIAS]
+    AL --> N[Next SQL Concept →]
+    style PK fill:#F2B84B,color:#0B1220
+    style AI fill:#F0876B,color:#0B1220
+    style AL fill:#4FD1C5,color:#0B1220
 ```
 
-> **Keep practicing. The goal is not to memorize SQL --- understand what
-> each part is doing. 🐬🔥**
+<div align="center">
+
+**Keep practicing. Goal ye nahi ke SQL ratta lagao — samjho ke har part kya kar raha hai. 🐬🔥**
+
+</div>
